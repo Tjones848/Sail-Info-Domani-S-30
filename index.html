@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Geschwindigkeitsanzeige & Kompass</title>
+
+  <!-- Schriftarten -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'DSEG7 Classic';
+      src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46.0/DSEG7Classic/DSEG7Classic-Regular.woff2') format('woff2');
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Barlow', sans-serif;
+      background-color: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .label, .max-sog, .unit {
+      font-family: 'Barlow', sans-serif;
+    }
+
+    .label {
+      font-size: 36px;
+      letter-spacing: 2px;
+    }
+
+    .max-sog {
+      font-size: 24px;
+      letter-spacing: 2px;
+      margin-top: 10px;
+    }
+
+    .value {
+      font-size: 72px;
+      letter-spacing: 5px;
+      margin: 10px;
+    }
+
+    .digits {
+      font-family: 'DSEG7 Classic', sans-serif;
+    }
+
+    .unit {
+      font-family: 'Barlow', sans-serif;
+      font-size: 100%; /* exakt gleiche Größe wie Zahlen */
+      margin-left: 4px;
+    }
+
+    .divider {
+      border-top: 3px solid white;
+      margin: 20px 0;
+    }
+
+    .field {
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- SOG -->
+    <div class="field">
+      <div class="label" id="SOG-label">SOG</div>
+      <div class="value">
+        <span class="digits" id="SOG-digits">-.--</span><span class="unit"> kn</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HDG -->
+    <div class="field">
+      <div class="label" id="HDG-label">HDG</div>
+      <div class="value">
+        <span class="digits" id="HDG-digits">---</span><span class="unit">°</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MAX. SOG -->
+    <div class="field">
+      <div class="max-sog" id="max-sog-label">MAX. SOG</div>
+      <div class="value">
+        <span class="digits" id="max-speed-digits">-.--</span><span class="unit"> kn</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let maxSpeed = 0;
+
+    function convertSpeedToKnots(speedInMetersPerSecond) {
+      return speedInMetersPerSecond * 1.943844;
+    }
+
+    function updateDisplay(position) {
+      const speed = position.coords.speed;
+      const heading = position.coords.heading;
+
+      if (speed !== null && !isNaN(speed)) {
+        const speedInKnots = convertSpeedToKnots(speed).toFixed(2);
+        document.getElementById('SOG-digits').textContent = speedInKnots;
+
+        if (parseFloat(speedInKnots) > maxSpeed) {
+          maxSpeed = parseFloat(speedInKnots);
+          document.getElementById('max-speed-digits').textContent = maxSpeed.toFixed(2);
+        }
+      } else {
+        document.getElementById('SOG-digits').textContent = '-.--';
+      }
+
+      if (heading !== null && !isNaN(heading)) {
+        document.getElementById('HDG-digits').textContent = heading.toFixed(0);
+      } else {
+        document.getElementById('HDG-digits').textContent = '---';
+      }
+    }
+
+    function errorHandler(error) {
+      console.warn("Fehler beim Abrufen des Standorts: ", error);
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateDisplay, errorHandler, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 250
+      });
+    } else {
+      alert("Geolokalisierung wird von diesem Gerät nicht unterstützt.");
+    }
+  </script>
+
+</body>
+</html>
