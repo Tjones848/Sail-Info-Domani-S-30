@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geschwindigkeitsanzeige & Kompass</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Barlow', sans-serif;
+      background-color: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+    }
+
+    /* Schriftarten importieren */
+    @import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+    /* Benennungen (SOG, HDG, MAX. SOG) */
+    .label {
+      font-family: 'Barlow', sans-serif;
+      font-size: 36px;
+      letter-spacing: 2px;
+    }
+    
+    /* Wertfelder mit Orbitron Schriftart */
+    .value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 72px;
+      letter-spacing: 5px;
+      margin: 10px;
+    }
+
+    /* Wertfelder für MAX. SOG */
+    .value2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      letter-spacing: 5px;
+      margin: 10px;
+    }
+
+    /* MAX. SOG in kleinerer Schrift */
+    .max-sog {
+      font-family: 'Barlow', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      margin-top: 10px;
+    }
+
+    /* Trennlinie */
+    .divider {
+      border-top: 1px solid white;
+      margin: 20px 0;
+    }
+
+    /* Container */
+    .field {
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- SOG -->
+    <div class="field">
+      <div class="label" id="SOG-label">SOG</div>
+      <div class="value" id="SOG">0 kn</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HDG -->
+    <div class="field">
+      <div class="label" id="HDG-label">HDG</div>
+      <div class="value" id="HDG">0°</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MAX. SOG -->
+    <div class="field">
+      <div class="max-sog" id="max-sog-label">MAX. SOG</div>
+      <div class="value2" id="max-speed">-.-- kn</div>
+    </div>
+  </div>
+
+  <script>
+    let maxSpeed = 0;
+
+    // Funktion zur Berechnung der Geschwindigkeit in Knoten
+    function convertSpeedToKnots(speedInMetersPerSecond) {
+      return speedInMetersPerSecond * 1.943844; // Umrechnung von m/s auf Knoten
+    }
+
+    // Funktion zur Aktualisierung der Anzeige
+    function updateDisplay(position) {
+      const speed = position.coords.speed;
+      const heading = position.coords.heading;
+
+      if (speed !== null && !isNaN(speed)) {
+        const speedInKnots = convertSpeedToKnots(speed).toFixed(2);
+        document.getElementById('SOG').textContent = `${speedInKnots} kn`;
+
+        if (parseFloat(speedInKnots) > maxSpeed) {
+          maxSpeed = parseFloat(speedInKnots);
+          document.getElementById('max-speed').textContent = `${maxSpeed.toFixed(2)} kn`;
+        }
+      } else {
+        document.getElementById('SOG').textContent = `-.-- kn`;
+      }
+
+      if (heading !== null && !isNaN(heading)) {
+        document.getElementById('HDG').textContent = `${heading.toFixed(2)}°`;
+      } else {
+        document.getElementById('HDG').textContent = `---°`;
+      }
+    }
+
+    // Fehlerbehandlung
+    function errorHandler(error) {
+      console.warn("Fehler beim Abrufen des Standorts: ", error);
+    }
+
+    // Standort- und Ausrichtungsdaten abrufen
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateDisplay, errorHandler, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 250
+      });
+    } else {
+      alert("Geolokalisierung wird von diesem Gerät nicht unterstützt.");
+    }
+  </script>
+
+</body>
+</html>
