@@ -106,7 +106,7 @@
     // Funktion zur Aktualisierung der Anzeige
     function updateDisplay(position) {
       const speedInKnots = convertSpeedToKnots(position.coords.speed).toFixed(1);
-      const heading = position.coords.heading ? position.coords.heading.toFixed(1) : '--';
+      const heading = position.coords.heading ? position.coords.heading.toFixed(0) : '--';
 
       // Aktuelle Geschwindigkeit anzeigen
       document.getElementById('SOG').textContent = `${speedInKnots} kn`;
