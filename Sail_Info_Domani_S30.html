@@ -75,7 +75,7 @@
     <!-- SOG -->
     <div class="field">
       <div class="label" id="SOG-label">SOG</div>
-      <div class="value" id="SOG">-- kn</div>
+      <div class="value" id="SOG">0 kn</div>
     </div>
 
     <div class="divider"></div>
@@ -83,7 +83,7 @@
     <!-- HDG -->
     <div class="field">
       <div class="label" id="HDG-label">HDG</div>
-      <div class="value" id="HDG">--°</div>
+      <div class="value" id="HDG">0°</div>
     </div>
 
     <div class="divider"></div>
@@ -91,7 +91,7 @@
     <!-- MAX. SOG -->
     <div class="field">
       <div class="max-sog" id="max-sog-label">MAX. SOG</div>
-      <div class="value2" id="max-speed">-- kn</div>
+      <div class="value2" id="max-speed">0 kn</div>
     </div>
   </div>
 
@@ -117,13 +117,13 @@
           document.getElementById('max-speed').textContent = `${maxSpeed.toFixed(2)} kn`;
         }
       } else {
-        document.getElementById('SOG').textContent = `-- kn`;
+        document.getElementById('SOG').textContent = `0.00 kn`;
       }
 
       if (heading !== null && !isNaN(heading)) {
-        document.getElementById('HDG').textContent = `${heading.toFixed(0)}°`;
+        document.getElementById('HDG').textContent = `${heading.toFixed(2)}°`;
       } else {
-        document.getElementById('HDG').textContent = `--°`;
+        document.getElementById('HDG').textContent = `0.00°`;
       }
     }
 
@@ -136,8 +136,8 @@
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(updateDisplay, errorHandler, {
         enableHighAccuracy: true,
-        maximumAge: 1000,
-        timeout: 5000
+        maximumAge: 0,
+        timeout: 250
       });
     } else {
       alert("Geolokalisierung wird von diesem Gerät nicht unterstützt.");
