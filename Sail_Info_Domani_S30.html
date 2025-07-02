@@ -83,4 +83,66 @@
     <!-- HDG -->
     <div class="field">
       <div class="label" id="HDG-label">HDG</div>
-      <div class="value" id="HDG">--°</
+      <div class="value" id="HDG">--°</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MAX. SOG -->
+    <div class="field">
+      <div class="max-sog" id="max-sog-label">MAX. SOG</div>
+      <div class="value2" id="max-speed">-- kn</div>
+    </div>
+  </div>
+
+  <script>
+    let maxSpeed = 0;
+
+    // Funktion zur Berechnung der Geschwindigkeit in Knoten
+    function convertSpeedToKnots(speedInMetersPerSecond) {
+      return speedInMetersPerSecond * 1.943844; // Umrechnung von m/s auf Knoten
+    }
+
+    // Funktion zur Aktualisierung der Anzeige
+    function updateDisplay(position) {
+      const speed = position.coords.speed;
+      const heading = position.coords.heading;
+
+      if (speed !== null && !isNaN(speed)) {
+        const speedInKnots = convertSpeedToKnots(speed).toFixed(2);
+        document.getElementById('SOG').textContent = `${speedInKnots} kn`;
+
+        if (parseFloat(speedInKnots) > maxSpeed) {
+          maxSpeed = parseFloat(speedInKnots);
+          document.getElementById('max-speed').textContent = `${maxSpeed.toFixed(2)} kn`;
+        }
+      } else {
+        document.getElementById('SOG').textContent = `-- kn`;
+      }
+
+      if (heading !== null && !isNaN(heading)) {
+        document.getElementById('HDG').textContent = `${heading.toFixed(0)}°`;
+      } else {
+        document.getElementById('HDG').textContent = `--°`;
+      }
+    }
+
+    // Fehlerbehandlung
+    function errorHandler(error) {
+      console.warn("Fehler beim Abrufen des Standorts: ", error);
+    }
+
+    // Standort- und Ausrichtungsdaten abrufen
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateDisplay, errorHandler, {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 5000
+      });
+    } else {
+      alert("Geolokalisierung wird von diesem Gerät nicht unterstützt.");
+    }
+  </script>
+
+</body>
+</html>
