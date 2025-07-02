@@ -91,7 +91,7 @@
     <!-- MAX. SOG -->
     <div class="field">
       <div class="max-sog" id="max-sog-label">MAX. SOG</div>
-      <div class="value2" id="max-speed">0 kn</div>
+      <div class="value2" id="max-speed">-.-- kn</div>
     </div>
   </div>
 
@@ -117,13 +117,13 @@
           document.getElementById('max-speed').textContent = `${maxSpeed.toFixed(2)} kn`;
         }
       } else {
-        document.getElementById('SOG').textContent = `0.00 kn`;
+        document.getElementById('SOG').textContent = `-.-- kn`;
       }
 
       if (heading !== null && !isNaN(heading)) {
         document.getElementById('HDG').textContent = `${heading.toFixed(2)}°`;
       } else {
-        document.getElementById('HDG').textContent = `0.00°`;
+        document.getElementById('HDG').textContent = `---°`;
       }
     }
 
